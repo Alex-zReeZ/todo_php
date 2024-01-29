@@ -1,0 +1,17 @@
+body {
+    margin: 5% 15%;
+    text-align: center;
+}
+
+.todo-list {
+    padding: 2%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.todo-row {
+    padding: 2%;
+    border: 2px black solid;
+}
+
