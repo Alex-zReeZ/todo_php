@@ -28,9 +28,9 @@ if (isset($_POST["postName"])) {
 
 ?>
 
---ajout todo, supprimer todo, modif la todo, fleche pour déplacer haut bas,
-boutton pour trier dans alphabétique, et inverse, element de triage -> get -
-
+<!--ajout todo, supprimer todo, modif la todo, fleche pour déplacer haut bas,
+boutton pour trier dans alphabétique, et inverse, element de triage -> get
+-->
 <!doctype html>
 <html lang="en">
 <head>
