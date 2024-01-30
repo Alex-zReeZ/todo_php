@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+
 $fileName = 'name.json';
 
 $jsonData = file_get_contents($fileName);
@@ -8,10 +9,10 @@ $data = json_decode($jsonData, true);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST["postName"])) {
-        $name = $_POST["postName"];
+        $name = $_POST["name"];
         $data[] = $name;
         file_put_contents($fileName, json_encode($data));
-        $_SESSION['AddedTodo'] = "The todo has been added";
+        $_SESSION['AddedTodo'] = "the todo has been added";
         header("Location: index.php");
         exit;
     } elseif (isset($_POST["resetButton"])) {
@@ -22,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $taskId = $_POST['removeTodo'];
         if (isset($data[$taskId])) {
             unset($data[$taskId]);
-            file_put_contents($fileName, json_encode(array_values($data)));
+            file_put_contents($fileName, json_encode($data));
         }
         header("Location: index.php");
         exit;
@@ -41,7 +42,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-
 
 <!--
 
