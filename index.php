@@ -1,6 +1,18 @@
 <?php
 session_start();
 
+/*$dsn = "sqlite:myDb.db";
+$options = [
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES   => false,
+];
+$pdo = new PDO($dsn, null, null, $options);
+
+$stmt = $pdo->prepare('select * FROM user');
+$stmt->execute();*/
+
+
 
 $fileName = 'name.json';
 
@@ -12,21 +24,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $name = $_POST["name"];
         $data[] = $name;
         file_put_contents($fileName, json_encode($data));
-        $_SESSION['AddedTodo'] = "the todo has been added";
-        header("Location: index.php");
-        exit;
+        $_SESSION['AddedTodo'] = "The todo has been added";
+        $_SESSION['ShowMessage'] = true;
+
     } elseif (isset($_POST["resetButton"])) {
         file_put_contents($fileName, '[]');
-        header("Location: index.php");
-        exit;
+
     } elseif (isset($_POST["removeTodo"])) {
         $taskId = $_POST['removeTodo'];
         if (isset($data[$taskId])) {
             unset($data[$taskId]);
             file_put_contents($fileName, json_encode($data));
         }
-        header("Location: index.php");
-        exit;
+
     }
 
     if (isset($_POST["sortAZ"])) {
@@ -37,18 +47,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (isset($_POST["sortZA"])) {
         rsort($data);
         file_put_contents($fileName, json_encode($data));
-        header("Location: index.php");
-        exit;
+
     }
+
+    if (isset($_POST['upButton'])) {
+        $taskId = $_POST['upButton'];
+        if ($taskId > 0) {
+            $temp = $data[$taskId];
+            $data[$taskId] = $data[$taskId - 1];
+            $data[$taskId - 1] = $temp;
+            file_put_contents($fileName, json_encode($data));
+        }
+    }
+
+    if (isset($_POST['downButton'])) {
+        $taskId = $_POST['downButton'];
+        if ($taskId < count($data) - 1) {
+            $temp = $data[$taskId];
+            $data[$taskId] = $data[$taskId + 1];
+            $data[$taskId + 1] = $temp;
+            file_put_contents($fileName, json_encode($data));
+        }
+    }
+
+    header("Location: index.php");
+    exit;
+
+}
+
+$showMessage = isset($_SESSION['ShowMessage']) && $_SESSION['ShowMessage'];
+if ($showMessage) {
+    $_SESSION['ShowMessage'] = false;
 }
 ?>
-
-<!--
-
-ajout todo, supprimer todo, modif la todo, fleche pour déplacer haut bas,
-button pour trier dans alphabétique, et inverse, element de triage -> get
-
--->
 
 <!doctype html>
 <html lang="en">
@@ -67,7 +98,7 @@ button pour trier dans alphabétique, et inverse, element de triage -> get
         <?php if (!empty($data)) :
             foreach ($data as $key => $value) : ?>
                 <div class='todo-row'>
-                    <span class="todo-title"><?= htmlspecialchars($key + 1 . '. ' . $value) ?></span>
+                    <div class="todo-title"><?= htmlspecialchars($key + 1 . '. ' . $value) ?></div>
                     <div class="button-section">
                         <button type="submit" name="modifyTodo" value='<?= $key ?>'>
                             edit
@@ -75,6 +106,11 @@ button pour trier dans alphabétique, et inverse, element de triage -> get
                         <button class="remove-button" type='submit' name='removeTodo' value='<?= $key ?>'>
                             Remove
                         </button>
+
+                        <div class="up-down">
+                            <button type="submit" name="upButton" value='<?= $key ?>' >Up</button>
+                            <button type="submit" name="downButton" value='<?= $key ?>'>Down</button>
+                        </div>
                     </div>
                 </div>
             <?php endforeach;
@@ -84,15 +120,15 @@ button pour trier dans alphabétique, et inverse, element de triage -> get
     <button type="submit" name="sortAZ">sort A to Z</button>
     <button type="submit" name="sortZA">sort Z to A</button>
 
-    <label for="name">
+    <label for="name" >
         <input id="name" type="text" name="name">
     </label>
     <button type="submit" name="postName">Submit</button>
     <button class="remove-button" type="submit" name="resetButton">Remove All</button>
     <br>
-    <span class="session"><?= $_SESSION['AddedTodo'] ?></span>
+    <?php if ($showMessage): ?>
+        <span class="session"><?= $_SESSION['AddedTodo']?></span>
+    <?php endif; ?>
 </form>
 </body>
 </html>
-
-
