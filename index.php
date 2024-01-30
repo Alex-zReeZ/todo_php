@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-/*$dsn = "sqlite:myDb.db";
+$dsn = "sqlite:myDb.db";
 $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -9,16 +9,10 @@ $options = [
 ];
 $pdo = new PDO($dsn, null, null, $options);
 
-$stmt = $pdo->prepare('select * FROM user');
-$stmt->execute();*/
-
-
-
 $fileName = 'name.json';
 
 $jsonData = file_get_contents($fileName);
 $data = json_decode($jsonData, true);
-
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     /* add todo */
@@ -33,18 +27,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (isset($_POST["resetButton"])) {
         file_put_contents($fileName, '[]');
 
-
         /* remove todo*/
     } elseif (isset($_POST["removeTodo"])) {
         $taskId = $_POST['removeTodo'];
         if (isset($data[$taskId])) {
             unset($data[$taskId]);
+            $data = array_values($data);
             file_put_contents($fileName, json_encode($data));
         }
 
-    } elseif (isset($_POST["modifyTodo"], $_POST["newValue"])) {
+    } elseif (isset($_POST["modifyTodo"])) {
         $key = $_POST['modifyTodo'];
-        $newValue = $_POST["newValue"];
+        $newValue = $_POST["newValue$key"];
+
 
         if (isset($data[$key])) {
             $data[$key] = $newValue;
@@ -53,7 +48,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     /* sort the todo list */
-
     if (isset($_POST["sortAZ"])) {
         sort($data);
         file_put_contents($fileName, json_encode($data));
@@ -85,7 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     header("Location: index.php");
     exit;
-
 }
 
 $showMessage = isset($_SESSION['ShowMessage']) && $_SESSION['ShowMessage'];
@@ -101,13 +94,14 @@ if ($showMessage) {
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
-    <title>Document</title>
+    <title>Todo list PHP</title>
 </head>
 <body>
 <form name="form" method="post" action="">
-    <h1>Add a todo :</h1>
+    <h1>Add a todo</h1>
     <div class="todo-list">
         <?php if (!empty($data)) :
             foreach ($data as $key => $value) : ?>
@@ -115,37 +109,39 @@ if ($showMessage) {
                     <div class="todo-title">
                         <?= htmlspecialchars($key + 1 . '. ') ?>
                         <label>
-                            <input class=hide-input name="newValue" value='<?= $value ?>'>
+                            <input class=hide-input name="newValue<?= $key ?>" value='<?= $value ?>'>
                         </label>
                     </div>
                     <div class="button-section">
                         <button class="btn btn-success" type="submit" name="modifyTodo" value='<?= $key ?>'>
-                            edit
+                            confirm edit
                         </button>
                         <button class="btn btn-danger" type='submit' name='removeTodo' value='<?= $key ?>'>
                             Remove
                         </button>
                     </div>
-                        <div class="up-down">
-                            <button class="btn btn-primary" type="submit" name="upButton" value='<?= $key ?>' >Up</button>
-                            <button class="btn btn-primary" type="submit" name="downButton" value='<?= $key ?>'>Down</button>
-                        </div>
+                    <div class="up-down">
+                        <button class="btn btn-primary" type="submit" name="upButton" value='<?= $key ?>'>Up</button>
+                        <button class="btn btn-primary" type="submit" name="downButton" value='<?= $key ?>'>Down
+                        </button>
+                    </div>
                 </div>
             <?php endforeach;
         endif; ?>
     </div>
+    <div class="down-button">
+        <button class="btn btn-secondary" type="submit" name="sortAZ">sort A to Z</button>
+        <button class="btn btn-secondary" type="submit" name="sortZA">sort Z to A</button>
 
-    <button class="btn btn-secondary" type="submit" name="sortAZ">sort A to Z</button>
-    <button class="btn btn-secondary" type="submit" name="sortZA">sort Z to A</button>
-
-    <label for="name" >
-        <input class="form-control" id="name" type="text" name="name">
-    </label>
-    <button class="btn btn-primary" type="submit" name="postName">Submit</button>
-    <button class="btn btn-danger" type="submit" name="resetButton">Remove All</button>
+        <label for="name">
+            <input class="form-control" id="name" type="text" name="name">
+        </label>
+        <button class="btn btn-primary" type="submit" name="postName">Submit</button>
+        <button class="btn btn-danger" type="submit" name="resetButton">Remove All</button>
+    </div>
     <br>
     <?php if ($showMessage): ?>
-        <span class="session"><?= $_SESSION['AddedTodo']?></span>
+        <span class="session"><?= $_SESSION['AddedTodo'] ?></span>
     <?php endif; ?>
 </form>
 </body>
