@@ -1,34 +1,42 @@
 <?php
-require "AddTodo.php";
-
 $fileName = 'name.json';
 
 $jsonData = file_get_contents($fileName);
-$data = json_decode($jsonData);
+$data = json_decode($jsonData, true);
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST["postName"])) {
+        $name = $_POST["name"];
+        $data[] = $name;
+        file_put_contents($fileName, json_encode($data));
+        header("Location: index.php");
+        exit;
+    } elseif (isset($_POST["resetButton"])) {
+        file_put_contents($fileName, '[]');
+        header("Location: index.php");
+        exit;
+    } elseif (isset($_POST["removeTodo"])) {
+        $taskId = $_POST['removeTodo'];
+        if (isset($data[$taskId])) {
+            unset($data[$taskId]);
+            file_put_contents($fileName, json_encode($data));
+        }
+        header("Location: index.php");
+        exit;
+    }
 
-if (isset($_POST["postName"])) {
-    $name = $_POST["name"];
-    $data[] = $name;
-    file_put_contents($fileName, json_encode($data));
-    header("Location: index.php");
+/*    if (isset($_POST["modifyTodo"])) {
 
-} elseif (isset($_POST["resetButton"])) {
-    file_put_contents($fileName, '');
-    header("Location: index.php");
+    }*/
 }
-
-
 ?>
-
 
 <!--
 
 ajout todo, supprimer todo, modif la todo, fleche pour déplacer haut bas,
-boutton pour trier dans alphabétique, et inverse, element de triage -> get
+button pour trier dans alphabétique, et inverse, element de triage -> get
 
 -->
-
 
 <!doctype html>
 <html lang="en">
@@ -41,24 +49,34 @@ boutton pour trier dans alphabétique, et inverse, element de triage -> get
     <title>Document</title>
 </head>
 <body>
-<h1> BONJOUR </h1>
 <form name="form" method="post" action="">
-    <h2>Add a todo :</h2>
+    <h1>Add a todo :</h1>
     <div class="todo-list">
-        <?php
-        if (!empty($data)) {
-            foreach ($data as $key => $value) {
-                echo "<div class='todo-row'>" . $value . "</div>";
-            }
-        } ?>
+        <?php if (!empty($data)) :
+            foreach ($data as $key => $value) : ?>
+                <div class='todo-row'>
+                    <span class="todo-title"><?= htmlspecialchars($key + 1 . '. ' . $value) ?></span>
+                    <div class="button-section">
+                        <button type="submit" name="modifyTodo" value='<?= $key ?>'>
+                            edit
+                        </button>
+                        <button class="remove-button" type='submit' name='removeTodo' value='<?= $key ?>'>
+                            Remove
+                        </button>
+                    </div>
+                </div>
+            <?php endforeach;
+        endif; ?>
     </div>
 
-    <label for="">
+    <button type="submit" name="sortAZ">sort A to Z</button>
+    <button type="submit" name="sortAZ">sort Z to A</button>
+
+    <label for="name">
         <input id="name" type="text" name="name">
     </label>
-    <button type="submit" name="postName"> submit</button>
-    <button type="submit" name="resetButton"> reset all</button>
+    <button type="submit" name="postName">Submit</button>
+    <button class="remove-button" type="submit" name="resetButton">Remove All</button>
 </form>
-
 </body>
 </html>

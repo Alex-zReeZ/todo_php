@@ -1,6 +1,11 @@
 body {
+    font-size: 12px;
     margin: 5% 15%;
     text-align: center;
+}
+
+form {
+    font-size: 2em;
 }
 
 .todo-list {
@@ -11,7 +16,25 @@ body {
 }
 
 .todo-row {
-    padding: 2%;
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.5em;
+    padding: 2% 5%;
     border: 2px black solid;
+    border-radius: 10px;
 }
 
+.todo-title {
+    vertical-align: center;
+}
+
+input, button {
+    font-size: 1em;
+    border-radius: 10px;
+    background-color: transparent;
+}
+
+.remove-button {
+    color: red;
+    border-color: red;
+}
