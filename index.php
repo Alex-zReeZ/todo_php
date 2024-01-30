@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 $fileName = 'name.json';
 
 $jsonData = file_get_contents($fileName);
@@ -6,9 +8,10 @@ $data = json_decode($jsonData, true);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST["postName"])) {
-        $name = $_POST["name"];
+        $name = $_POST["postName"];
         $data[] = $name;
         file_put_contents($fileName, json_encode($data));
+        $_SESSION['AddedTodo'] = "The todo has been added";
         header("Location: index.php");
         exit;
     } elseif (isset($_POST["resetButton"])) {
@@ -19,19 +22,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $taskId = $_POST['removeTodo'];
         if (isset($data[$taskId])) {
             unset($data[$taskId]);
-            file_put_contents($fileName, json_encode($data));
+            file_put_contents($fileName, json_encode(array_values($data)));
         }
         header("Location: index.php");
         exit;
     }
 
-   if (isset($_POST["sortAZ"])) {
+    if (isset($_POST["sortAZ"])) {
         sort($data);
+        file_put_contents($fileName, json_encode($data));
+        header("Location: index.php");
+        exit;
     } elseif (isset($_POST["sortZA"])) {
         rsort($data);
-   }
+        file_put_contents($fileName, json_encode($data));
+        header("Location: index.php");
+        exit;
+    }
 }
 ?>
+
 
 <!--
 
@@ -72,13 +82,17 @@ button pour trier dans alphabétique, et inverse, element de triage -> get
     </div>
 
     <button type="submit" name="sortAZ">sort A to Z</button>
-    <button type="submit" name="sortAZ">sort Z to A</button>
+    <button type="submit" name="sortZA">sort Z to A</button>
 
     <label for="name">
         <input id="name" type="text" name="name">
     </label>
     <button type="submit" name="postName">Submit</button>
     <button class="remove-button" type="submit" name="resetButton">Remove All</button>
+    <br>
+    <span class="session"><?= $_SESSION['AddedTodo'] ?></span>
 </form>
 </body>
 </html>
+
+
