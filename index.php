@@ -88,6 +88,7 @@ if ($showMessage) {
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
     <title>Document</title>
 </head>
@@ -100,16 +101,16 @@ if ($showMessage) {
                 <div class='todo-row'>
                     <div class="todo-title"><?= htmlspecialchars($key + 1 . '. ' . $value) ?></div>
                     <div class="button-section">
-                        <button type="submit" name="modifyTodo" value='<?= $key ?>'>
+                        <button class="btn btn-success" type="submit" name="modifyTodo" value='<?= $key ?>'>
                             edit
                         </button>
-                        <button class="remove-button" type='submit' name='removeTodo' value='<?= $key ?>'>
+                        <button class="btn btn-danger" type='submit' name='removeTodo' value='<?= $key ?>'>
                             Remove
                         </button>
 
                         <div class="up-down">
-                            <button type="submit" name="upButton" value='<?= $key ?>' >Up</button>
-                            <button type="submit" name="downButton" value='<?= $key ?>'>Down</button>
+                            <button class="btn btn-primary" type="submit" name="upButton" value='<?= $key ?>' >Up</button>
+                            <button class="btn btn-primary" type="submit" name="downButton" value='<?= $key ?>'>Down</button>
                         </div>
                     </div>
                 </div>
@@ -117,14 +118,14 @@ if ($showMessage) {
         endif; ?>
     </div>
 
-    <button type="submit" name="sortAZ">sort A to Z</button>
-    <button type="submit" name="sortZA">sort Z to A</button>
+    <button class="btn btn-secondary" type="submit" name="sortAZ">sort A to Z</button>
+    <button class="btn btn-secondary" type="submit" name="sortZA">sort Z to A</button>
 
     <label for="name" >
-        <input id="name" type="text" name="name">
+        <input class="form-control" id="name" type="text" name="name">
     </label>
-    <button type="submit" name="postName">Submit</button>
-    <button class="remove-button" type="submit" name="resetButton">Remove All</button>
+    <button class="btn btn-primary" type="submit" name="postName">Submit</button>
+    <button class="btn btn-danger" type="submit" name="resetButton">Remove All</button>
     <br>
     <?php if ($showMessage): ?>
         <span class="session"><?= $_SESSION['AddedTodo']?></span>

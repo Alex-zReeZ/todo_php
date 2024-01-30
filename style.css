@@ -1,6 +1,6 @@
 body {
     font-size: 12px;
-    margin: 5% 15%;
+    margin: 2% 15%;
     text-align: center;
 }
 
@@ -25,7 +25,8 @@ form {
 }
 
 .todo-title {
-    vertical-align: center;
+    padding-top: 1.4%;
+    vertical-align: bottom;
 }
 
 input, button {
@@ -34,10 +35,6 @@ input, button {
     background-color: transparent;
 }
 
-.remove-button {
-    color: red;
-    border-color: red;
-}
 
 .session {
     color: red;
@@ -54,4 +51,25 @@ input, button {
     display: flex;
     flex-direction: row;
     gap: 3%;
+}
+
+.move-button {
+    color: white;
+    background-color: darkblue;
+    border-color: darkblue;
+}
+
+.btn-success {
+    font-size: 0.6em;
+    width: 100px;
+}
+
+.btn-danger {
+    font-size: 0.6em;
+    width: 180px;
+}
+
+.btn-primary {
+    font-size: 0.7em;
+    width: 80px;
 }
