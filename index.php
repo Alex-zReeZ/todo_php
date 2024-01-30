@@ -25,9 +25,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-/*    if (isset($_POST["modifyTodo"])) {
-
-    }*/
+   if (isset($_POST["sortAZ"])) {
+        sort($data);
+    } elseif (isset($_POST["sortZA"])) {
+        rsort($data);
+   }
 }
 ?>
 
