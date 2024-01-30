@@ -25,7 +25,7 @@ form {
 }
 
 .todo-title {
-    padding-top: 1.4%;
+    padding-top: 1%;
     vertical-align: bottom;
 }
 
@@ -59,17 +59,6 @@ input, button {
     border-color: darkblue;
 }
 
-.btn-success {
-    font-size: 0.6em;
-    width: 100px;
-}
-
-.btn-danger {
-    font-size: 0.6em;
-    width: 180px;
-}
-
-.btn-primary {
-    font-size: 0.7em;
-    width: 80px;
+.hide-input {
+    border-color: transparent;
 }

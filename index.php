@@ -19,7 +19,9 @@ $fileName = 'name.json';
 $jsonData = file_get_contents($fileName);
 $data = json_decode($jsonData, true);
 
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    /* add todo */
     if (isset($_POST["postName"])) {
         $name = $_POST["name"];
         $data[] = $name;
@@ -27,9 +29,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['AddedTodo'] = "The todo has been added";
         $_SESSION['ShowMessage'] = true;
 
+        /* reset all todo*/
     } elseif (isset($_POST["resetButton"])) {
         file_put_contents($fileName, '[]');
 
+
+        /* remove todo*/
     } elseif (isset($_POST["removeTodo"])) {
         $taskId = $_POST['removeTodo'];
         if (isset($data[$taskId])) {
@@ -37,13 +42,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             file_put_contents($fileName, json_encode($data));
         }
 
+    } elseif (isset($_POST["modifyTodo"], $_POST["newValue"])) {
+        $key = $_POST['modifyTodo'];
+        $newValue = $_POST["newValue"];
+
+        if (isset($data[$key])) {
+            $data[$key] = $newValue;
+            file_put_contents($fileName, json_encode($data));
+        }
     }
+
+    /* sort the todo list */
 
     if (isset($_POST["sortAZ"])) {
         sort($data);
         file_put_contents($fileName, json_encode($data));
-        header("Location: index.php");
-        exit;
     } elseif (isset($_POST["sortZA"])) {
         rsort($data);
         file_put_contents($fileName, json_encode($data));
@@ -99,7 +112,12 @@ if ($showMessage) {
         <?php if (!empty($data)) :
             foreach ($data as $key => $value) : ?>
                 <div class='todo-row'>
-                    <div class="todo-title"><?= htmlspecialchars($key + 1 . '. ' . $value) ?></div>
+                    <div class="todo-title">
+                        <?= htmlspecialchars($key + 1 . '. ') ?>
+                        <label>
+                            <input class=hide-input name="newValue" value='<?= $value ?>'>
+                        </label>
+                    </div>
                     <div class="button-section">
                         <button class="btn btn-success" type="submit" name="modifyTodo" value='<?= $key ?>'>
                             edit
@@ -107,12 +125,11 @@ if ($showMessage) {
                         <button class="btn btn-danger" type='submit' name='removeTodo' value='<?= $key ?>'>
                             Remove
                         </button>
-
+                    </div>
                         <div class="up-down">
                             <button class="btn btn-primary" type="submit" name="upButton" value='<?= $key ?>' >Up</button>
                             <button class="btn btn-primary" type="submit" name="downButton" value='<?= $key ?>'>Down</button>
                         </div>
-                    </div>
                 </div>
             <?php endforeach;
         endif; ?>
