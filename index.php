@@ -2,31 +2,31 @@
 session_start();
 
 /* Database connexion */
-require "connectToDatabase.php";
+require "optionFunction/connectToDatabase.php";
 
 /* Read JSON data from file */
-require "readJsonData.php";
+require "optionFunction/readJsonData.php";
 
 /* Write JSON data to file */
-require "writeJsonData.php";
+require "optionFunction/writeJsonData.php";
 
 /* Add a new todo */
-require "addTodo.php";
+require "optionFunction/addTodo.php";
 
 /* Reset all todos */
-require "resetTodo.php";
+require "optionFunction/resetTodo.php";
 
 /* Remove a todo */
-require "removeTodo.php";
+require "optionFunction/removeTodo.php";
 
 /* Modify a todo */
-require "modifyTodo.php";
+require "optionFunction/modifyTodo.php";
 
 /* Sort the todo list */
-require "sortTodo.php";
+require "optionFunction/sortTodo.php";
 
 /* Move todo up or down */
-require "moveTodo.php";
+require "optionFunction/moveTodo.php";
 
 $fileName = 'name.json';
 $pdo = connectToDatabase();
