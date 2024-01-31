@@ -12,13 +12,27 @@ function addTodo(): void
 }
 
 /* Modify tod */
-function modifyTodo($data, $key, $newValue): void
+function modifyTodo()
 {
-    if (isset($data[$key])) {
-        $data[$key] = $newValue;
-        writedatabase();
+    global $pdo;
+
+        $taskId = $_POST['modifyTodo'];
+        $newValueKey = 'newValue_' . $taskId;
+
+    if (isset($_POST[$newValueKey])) {
+        $updatedValue = $_POST[$newValueKey];
+
+        $updateData = $pdo->prepare('UPDATE todo SET name = :updatedValue WHERE id = :id');
+        $updateData->execute(['id' => $taskId, 'updatedValue' => $updatedValue]);
     }
+
 }
+
+
+
+
+
+
 
 /* Move todo up dans down */
 function moveTodo($data, $taskId, $direction): void
@@ -43,7 +57,6 @@ function removeTodo($taskId): void
     $deleteData->execute(['id' => $taskId]);
 }
 
-
 /* Reset todo file */
 function resetTodo(): void
 {
@@ -53,15 +66,14 @@ function resetTodo(): void
 }
 
 /* Sort todo alphabetically */
-function sortTodos($data, $sortType): void
+function sortTodos(): void
 {
     global $pdo;
-    if ($sortType === "AZ") {
-        sort($data);
-    } elseif ($sortType === "ZA") {
-        rsort($data);
+    if (isset($_POST['sortAZ'])) {
+        $pdo->prepare('SELECT * FROM todo order by name ');
+    } elseif ($_POST['sortZA']) {
+        $pdo->prepare('SELECT * FROM todo order by name desc ');
     }
-    writeDatabase();
 }
 
 /* Write data in json */

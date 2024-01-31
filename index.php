@@ -17,9 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (isset($_POST["removeTodo"])) {
         removeTodo($_POST['removeTodo']);
     } elseif (isset($_POST["modifyTodo"])) {
-        modifyTodo($_POST['modifyTodo'], $_POST["newValue" . $_POST['modifyTodo']]);
+        modifyTodo();
     } elseif (isset($_POST["sortAZ"]) || isset($_POST["sortZA"])) {
-        sortTodos(isset($_POST["sortAZ"]) ? "AZ" : "ZA");
+        sortTodos();
     } elseif (isset($_POST['upButton'])) {
         moveTodo($_POST['upButton'], 'up');
     } elseif (isset($_POST['downButton'])) {
@@ -55,18 +55,21 @@ if ($showMessage) {
     <h3
     >Click on todo to edit text</h3>
     <div class="todo-list">
-        <?php if (!empty($row)) :
-            foreach ($row as $todo) : ?>
-                <div class='todo-row'>
+        <?php
+        $test = 1;
+        if (!empty($row)) :
+            foreach ($row as $todo) :
+                ?>
+                <div class="todo-row">
                     <div class="todo-title">
-                        <?= htmlspecialchars($todo['id'] . '. ') ?>
+                        <?php echo htmlspecialchars($test++ . '. '); ?>
                         <label>
-                            <input class=hide-input name="newValue<?= $todo['id'] ?>" value='<?= $todo['name'] ?>'>
+                            <input class="hide-input" name="newValue_<?= $todo['id'] ?>" value="<?= $todo['name'] ?>">
                         </label>
                     </div>
                     <div class="button-section">
-                        <button class="btn btn-success" type="submit" name="modifyTodo" value='<?= $todo['id'] ?>'>
-                            confirm edit
+                        <button class="btn btn-success" type="submit" name="modifyTodo" value="<?= $todo['id'] ?>">
+                            Confirm edit
                         </button>
                         <button class="btn btn-danger" type='submit' name='removeTodo' value='<?= $todo['id'] ?>'>
                             Remove
@@ -74,12 +77,13 @@ if ($showMessage) {
                     </div>
                     <div class="up-down">
                         <button class="btn btn-primary" type="submit" name="upButton" value='<?= $todo['id'] ?>'>Up</button>
-                        <button class="btn btn-primary" type="submit" name="downButton" value='<?= $todo['id'] ?>'>Down
-                        </button>
+                        <button class="btn btn-primary" type="submit" name="downButton" value='<?= $todo['id'] ?>'>Down</button>
                     </div>
                 </div>
-            <?php endforeach;
-        endif; ?>
+            <?php
+            endforeach;
+        endif;
+        ?>
     </div>
     <div class="down-button">
         <button class="btn btn-secondary" type="submit" name="sortAZ">sort A to Z</button>
