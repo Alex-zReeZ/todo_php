@@ -5,37 +5,35 @@ require "connectToDatabase.php";
 global $row;
 
 /* connect to json and in the futur the database */
-$fileName = 'name.json';
 /*$pdo = connectToDatabase();*/
-$data = readJsonData($fileName);
 
 
 /* Call the functions */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST["postName"])) {
-        addTodo($fileName, $data, $_POST["name"]);
+        addTodo();
     } elseif (isset($_POST["resetButton"])) {
-        resetTodo($fileName);
+        resetTodo();
     } elseif (isset($_POST["removeTodo"])) {
-        removeTodo($fileName, $data, $_POST['removeTodo']);
+        removeTodo($_POST['removeTodo']);
     } elseif (isset($_POST["modifyTodo"])) {
-        modifyTodo($fileName, $data, $_POST['modifyTodo'], $_POST["newValue" . $_POST['modifyTodo']]);
+        modifyTodo($_POST['modifyTodo'], $_POST["newValue" . $_POST['modifyTodo']]);
     } elseif (isset($_POST["sortAZ"]) || isset($_POST["sortZA"])) {
-        sortTodos($fileName, $data, isset($_POST["sortAZ"]) ? "AZ" : "ZA");
+        sortTodos(isset($_POST["sortAZ"]) ? "AZ" : "ZA");
     } elseif (isset($_POST['upButton'])) {
-        moveTodo($fileName, $data, $_POST['upButton'], 'up');
+        moveTodo($_POST['upButton'], 'up');
     } elseif (isset($_POST['downButton'])) {
-        moveTodo($fileName, $data, $_POST['downButton'], 'down');
+        moveTodo($_POST['downButton'], 'down');
     }
     header("Location: index.php");
     exit;
 }
 
 $showMessage = isset($_SESSION['ShowMessage']) && $_SESSION['ShowMessage'];
-if ($showMessage)
-{
+if ($showMessage) {
     $_SESSION['ShowMessage'] = false;
 }
+
 ?>
 
 
@@ -58,25 +56,25 @@ if ($showMessage)
     >Click on todo to edit text</h3>
     <div class="todo-list">
         <?php if (!empty($row)) :
-            foreach ($row as $key => $value) : ?>
+            foreach ($row as $todo) : ?>
                 <div class='todo-row'>
                     <div class="todo-title">
-                        <?= htmlspecialchars($key + 1 . '. ') ?>
+                        <?= htmlspecialchars($todo['id'] . '. ') ?>
                         <label>
-                            <input class=hide-input name="newValue<?= $key ?>" value='<?= $value['name'] ?>'>
+                            <input class=hide-input name="newValue<?= $todo['id'] ?>" value='<?= $todo['name'] ?>'>
                         </label>
                     </div>
                     <div class="button-section">
-                        <button class="btn btn-success" type="submit" name="modifyTodo" value='<?= $key ?>'>
+                        <button class="btn btn-success" type="submit" name="modifyTodo" value='<?= $todo['id'] ?>'>
                             confirm edit
                         </button>
-                        <button class="btn btn-danger" type='submit' name='removeTodo' value='<?= $key ?>'>
+                        <button class="btn btn-danger" type='submit' name='removeTodo' value='<?= $todo['id'] ?>'>
                             Remove
                         </button>
                     </div>
                     <div class="up-down">
-                        <button class="btn btn-primary" type="submit" name="upButton" value='<?= $key ?>'>Up</button>
-                        <button class="btn btn-primary" type="submit" name="downButton" value='<?= $key ?>'>Down
+                        <button class="btn btn-primary" type="submit" name="upButton" value='<?= $todo['id'] ?>'>Up</button>
+                        <button class="btn btn-primary" type="submit" name="downButton" value='<?= $todo['id'] ?>'>Down
                         </button>
                     </div>
                 </div>

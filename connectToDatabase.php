@@ -24,4 +24,6 @@ $errorMessage1 = '';
 
 $query = $pdo->prepare("SELECT * FROM todo");
 $query->execute();
+
+/* get content of database */
 $row = $query->fetchAll(PDO::FETCH_ASSOC);

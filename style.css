@@ -1,11 +1,3 @@
-:root {
-    --cl-heart: #fb003f7e;
-    --cl-star: #ff7b00ad;
-    --cl-trash: #8b00e27a;
-    --cl-default: #685ba062;
-    --cl-add: #5a86ec;
-}
-
 * {
     padding: 0;
     margin: 0;
@@ -36,8 +28,6 @@ h1, h3 {
     border-radius: 16px;
     background: rgba(255, 255, 255, 0.3);
     box-shadow: 0 4px 5px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
     border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
