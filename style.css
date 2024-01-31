@@ -24,7 +24,7 @@ body {
     color: #444;
 }
 
-h1 {
+h1, h3 {
     margin-top: 2%;
     text-align: center;
 }

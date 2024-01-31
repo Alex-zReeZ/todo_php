@@ -1,80 +1,52 @@
 <?php
 session_start();
 
-$dsn = "sqlite:myDb.db";
-$options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES   => false,
-];
-$pdo = new PDO($dsn, null, null, $options);
+/* Database connexion */
+require "connectToDatabase.php";
+
+/* Read JSON data from file */
+require "readJsonData.php";
+
+/* Write JSON data to file */
+require "writeJsonData.php";
+
+/* Add a new todo */
+require "addTodo.php";
+
+/* Reset all todos */
+require "resetTodo.php";
+
+/* Remove a todo */
+require "removeTodo.php";
+
+/* Modify a todo */
+require "modifyTodo.php";
+
+/* Sort the todo list */
+require "sortTodo.php";
+
+/* Move todo up or down */
+require "moveTodo.php";
 
 $fileName = 'name.json';
-
-$jsonData = file_get_contents($fileName);
-$data = json_decode($jsonData, true);
+$pdo = connectToDatabase();
+$data = readJsonData($fileName);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    /* add todo */
     if (isset($_POST["postName"])) {
-        $name = $_POST["name"];
-        $data[] = $name;
-        file_put_contents($fileName, json_encode($data));
-        $_SESSION['AddedTodo'] = "The todo has been added";
-        $_SESSION['ShowMessage'] = true;
-
-        /* reset all todo*/
+        addTodo($fileName, $data, $_POST["name"]);
     } elseif (isset($_POST["resetButton"])) {
-        file_put_contents($fileName, '[]');
-
-        /* remove todo*/
+        resetTodo($fileName);
     } elseif (isset($_POST["removeTodo"])) {
-        $taskId = $_POST['removeTodo'];
-        if (isset($data[$taskId])) {
-            unset($data[$taskId]);
-            $data = array_values($data);
-            file_put_contents($fileName, json_encode($data));
-        }
-
+        removeTodo($fileName, $data, $_POST['removeTodo']);
     } elseif (isset($_POST["modifyTodo"])) {
-        $key = $_POST['modifyTodo'];
-        $newValue = $_POST["newValue$key"];
-
-
-        if (isset($data[$key])) {
-            $data[$key] = $newValue;
-            file_put_contents($fileName, json_encode($data));
-        }
-    }
-
-    /* sort the todo list */
-    if (isset($_POST["sortAZ"])) {
-        sort($data);
-        file_put_contents($fileName, json_encode($data));
-    } elseif (isset($_POST["sortZA"])) {
-        rsort($data);
-        file_put_contents($fileName, json_encode($data));
-
-    }
-
-    if (isset($_POST['upButton'])) {
-        $taskId = $_POST['upButton'];
-        if ($taskId > 0) {
-            $temp = $data[$taskId];
-            $data[$taskId] = $data[$taskId - 1];
-            $data[$taskId - 1] = $temp;
-            file_put_contents($fileName, json_encode($data));
-        }
-    }
-
-    if (isset($_POST['downButton'])) {
-        $taskId = $_POST['downButton'];
-        if ($taskId < count($data) - 1) {
-            $temp = $data[$taskId];
-            $data[$taskId] = $data[$taskId + 1];
-            $data[$taskId + 1] = $temp;
-            file_put_contents($fileName, json_encode($data));
-        }
+        modifyTodo($fileName, $data, $_POST['modifyTodo'], $_POST["newValue" . $_POST['modifyTodo']]);
+    } elseif (isset($_POST["sortAZ"]) || isset($_POST["sortZA"])) {
+        sortTodos($fileName, $data, isset($_POST["sortAZ"]) ? "AZ" : "ZA");
+    } elseif (isset($_POST['upButton'])) {
+        moveTodo($fileName, $data, $_POST['upButton'], 'up');
+    } elseif (isset($_POST['downButton'])) {
+        moveTodo($fileName, $data, $_POST['downButton'], 'down');
     }
 
     header("Location: index.php");
@@ -86,6 +58,7 @@ if ($showMessage) {
     $_SESSION['ShowMessage'] = false;
 }
 ?>
+
 
 <!doctype html>
 <html lang="en">
@@ -102,6 +75,8 @@ if ($showMessage) {
 <body>
 <form name="form" method="post" action="">
     <h1>Add a todo</h1>
+    <h3
+    >Clique on todo text to edit</h3>
     <div class="todo-list">
         <?php if (!empty($data)) :
             foreach ($data as $key => $value) : ?>
@@ -140,6 +115,7 @@ if ($showMessage) {
         <button class="btn btn-danger" type="submit" name="resetButton">Remove All</button>
     </div>
     <br>
+
     <?php if ($showMessage): ?>
         <span class="session"><?= $_SESSION['AddedTodo'] ?></span>
     <?php endif; ?>
