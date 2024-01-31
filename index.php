@@ -1,37 +1,16 @@
 <?php
 session_start();
+require "todoFunction.php";
+require "connectToDatabase.php";
+global $row;
 
-/* Database connexion */
-require "optionFunction/connectToDatabase.php";
-
-/* Read JSON data from file */
-require "optionFunction/readJsonData.php";
-
-/* Write JSON data to file */
-require "optionFunction/writeJsonData.php";
-
-/* Add a new todo */
-require "optionFunction/addTodo.php";
-
-/* Reset all todos */
-require "optionFunction/resetTodo.php";
-
-/* Remove a todo */
-require "optionFunction/removeTodo.php";
-
-/* Modify a todo */
-require "optionFunction/modifyTodo.php";
-
-/* Sort the todo list */
-require "optionFunction/sortTodo.php";
-
-/* Move todo up or down */
-require "optionFunction/moveTodo.php";
-
+/* connect to json and in the futur the database */
 $fileName = 'name.json';
-$pdo = connectToDatabase();
+/*$pdo = connectToDatabase();*/
 $data = readJsonData($fileName);
 
+
+/* Call the functions */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST["postName"])) {
         addTodo($fileName, $data, $_POST["name"]);
@@ -48,13 +27,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (isset($_POST['downButton'])) {
         moveTodo($fileName, $data, $_POST['downButton'], 'down');
     }
-
     header("Location: index.php");
     exit;
 }
 
 $showMessage = isset($_SESSION['ShowMessage']) && $_SESSION['ShowMessage'];
-if ($showMessage) {
+if ($showMessage)
+{
     $_SESSION['ShowMessage'] = false;
 }
 ?>
@@ -76,15 +55,15 @@ if ($showMessage) {
 <form name="form" method="post" action="">
     <h1>Add a todo</h1>
     <h3
-    >Clique on todo text to edit</h3>
+    >Click on todo to edit text</h3>
     <div class="todo-list">
-        <?php if (!empty($data)) :
-            foreach ($data as $key => $value) : ?>
+        <?php if (!empty($row)) :
+            foreach ($row as $key => $value) : ?>
                 <div class='todo-row'>
                     <div class="todo-title">
                         <?= htmlspecialchars($key + 1 . '. ') ?>
                         <label>
-                            <input class=hide-input name="newValue<?= $key ?>" value='<?= $value ?>'>
+                            <input class=hide-input name="newValue<?= $key ?>" value='<?= $value['name'] ?>'>
                         </label>
                     </div>
                     <div class="button-section">

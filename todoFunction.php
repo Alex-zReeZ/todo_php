@@ -1,23 +1,28 @@
 <?php
 
+require "connectToDatabase.php";
 
 
+/* Add todo */
 function addTodo($fileName, $data, $name): void
 {
-    $data[] = $name;
-    writeJsonData($fileName, $data);
+    if (isset($_POST["postName"])) {
+        writeDatabase();
+    }
     $_SESSION['AddedTodo'] = "The todo has been added";
     $_SESSION['ShowMessage'] = true;
 }
 
+/* Modify tod */
 function modifyTodo($fileName, $data, $key, $newValue): void
 {
     if (isset($data[$key])) {
         $data[$key] = $newValue;
-        writeJsonData($fileName, $data);
+        writeDatabase($fileName, $data);
     }
 }
 
+/* Move todo up dans down */
 function moveTodo($fileName, $data, $taskId, $direction): void
 {
     if ($direction === 'up' && $taskId > 0) {
@@ -29,23 +34,28 @@ function moveTodo($fileName, $data, $taskId, $direction): void
         $data[$taskId] = $data[$taskId + 1];
         $data[$taskId + 1] = $temp;
     }
-    writeJsonData($fileName, $data);
+    writedatabase($fileName, $data);
 }
 
+/* Remove todo */
 function removeTodo($fileName, $data, $taskId): void
 {
     if (isset($data[$taskId])) {
         unset($data[$taskId]);
         $data = array_values($data);
-        writeJsonData($fileName, $data);
+        writeDatabase($fileName, $data);
     }
 }
 
+/* Reset todo file */
 function resetTodo($fileName): void
 {
-    writeJsonData($fileName, []);
+    global $pdo;
+    $deleteData = $pdo->prepare('DELETE FROM todo');
+    $deleteData->execute();
 }
 
+/* Sort todo alphabetically */
 function sortTodos($fileName, $data, $sortType): void
 {
     if ($sortType === "AZ") {
@@ -53,18 +63,21 @@ function sortTodos($fileName, $data, $sortType): void
     } elseif ($sortType === "ZA") {
         rsort($data);
     }
-    writeJsonData($fileName, $data);
+    writeDatabase($fileName, $data);
 }
 
-function writeJsonData($fileName, $data): void
+/* Write data in json */
+function writeDatabase(): void
 {
+    global $pdo;
+    $insertData = $pdo->prepare('INSERT INTO todo(name) VALUES (:nom)');
+    $insertData->execute(['nom' => $_POST["name"]]);
 
-/*    $insertData = $pdo->prepare('INSERT INTO todo(name) VALUES (:name)');
-    $insertData->execute(['nom' => $_POST["todoName"], 'date' => $_POST["todoDate"]]);*/
-
-    file_put_contents($fileName, json_encode($data));
+    header("Location: index.php");
+    exit;
 }
 
+/* Read json file */
 function readJsonData($fileName)
 {
     $jsonData = file_get_contents($fileName);
