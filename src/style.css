@@ -8,7 +8,7 @@ body {
     background-image: linear-gradient(to top, #5ee7df 0%, #94bbe9 50%, #b490ca 100%);
     background-repeat: no-repeat;
     background-attachment: fixed;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: 'Utopia, Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     color: #444;
 }
 
@@ -78,4 +78,9 @@ h1, h3 {
     text-align: center;
     padding-top: 5%;
     margin: 0 5%;
+}
+
+.upSearchBar {
+    text-align: center;
+    padding: 2%;
 }

@@ -1,12 +1,9 @@
 <?php
+require_once './vendor/autoload.php';
 session_start();
-require "connectToDatabase.php";
-require "todoFunction.php";
+require "./src/connectToDatabase.php";
+require "./src/todoFunction.php";
 global $row;
-
-/* connect to json and in the futur the database */
-/*$pdo = connectToDatabase();*/
-
 
 /* Call the functions */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -19,10 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (isset($_POST["modifyTodo"])) {
         modifyTodo();
     } elseif (isset($_POST['upButton'])) {
-        moveTodo($_POST['upButton'], 'up');
-    } elseif (isset($_POST['downButton'])) {
+        moveTodoUp();
+    } /*elseif (isset($_POST['downButton'])) {
         moveTodo($_POST['downButton'], 'down');
-    }
+    }*/
     header("Location: index.php");
     exit;
 } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -30,9 +27,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         sortTodosAZ();
     } elseif (isset($_GET["sortZA"])) {
         sortTodosZA();
+    } elseif (isset($_GET['searchTodo'])) {
+        searchTodo();
     }
-}
 
+}
 
 $showMessage = isset($_SESSION['ShowMessage']) && $_SESSION['ShowMessage'];
 if ($showMessage) {
@@ -51,14 +50,26 @@ if ($showMessage) {
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../src/style.css">
     <title>Todo list PHP</title>
 </head>
 <body>
+
+<h1>Welcome to my PHP todo</h1>
+<h3>Click on todo to edit text</h3>
+
+<!-- Search a todo by name -->
+
+<form class="upSearchBar" action="" method="get">
+    <label>
+        <input class="form-control" type="text" name="searchBar" placeholder="Search a todo">
+    </label>
+    <button class="btn btn-primary" type="submit" name="searchTodo" value=""> search todo </button>
+</form>
+
 <form name="form" method="post" action="">
-    <h1>Add a todo</h1>
-    <h3>Click on todo to edit text</h3>
     <div class="todo-list">
+
         <?php
         $test = 1;
         if (!empty($row)) :
@@ -99,13 +110,13 @@ if ($showMessage) {
     <div class="down-button">
         <div class="formsort">
             <form action="" method="get">
-                <button class="btn btn-secondary" type="submit" name="sortAZ">sort A to Z</button>
-                <button class="btn btn-secondary" type="submit" name="sortZA">sort Z to A</button>
+                <button class="btn btn-secondary" type="submit" name="sortAZ" value="sortAZ">sort A to Z</button>
+                <button class="btn btn-secondary" type="submit" name="sortZA" value="sortZA">sort Z to A</button>
             </form>
         </div>
         <form action="" method="post">
             <label for="name">
-                <input class="form-control" id="name" type="text" name="name">
+                <input class="form-control" id="name" type="text" name="name" placeholder="Add a new todo">
             </label>
             <button class="btn btn-primary" type="submit" name="postName">Submit</button>
         </form>

@@ -2,7 +2,6 @@
 
 // Vérifie si la fonction existe déjà
 if (!function_exists('connectToDatabase')) {
-
     function connectToDatabase() : PDO
     {
         $dsn = "sqlite:myDb.db";

@@ -2,7 +2,6 @@
 
 require "connectToDatabase.php";
 
-
 /* Add todo */
 function addTodo(): void
 {
@@ -28,21 +27,25 @@ function modifyTodo(): void
 
 }
 
-
 /* Move todo up dans down */
-function moveTodo($data, $taskId, $direction): void
+/* Move todo up and down */
+function moveTodoUp()
 {
-    if ($direction === 'up' && $taskId > 0) {
-        $temp = $data[$taskId];
-        $data[$taskId] = $data[$taskId - 1];
-        $data[$taskId - 1] = $temp;
-    } elseif ($direction === 'down' && $taskId < count($data) - 1) {
-        $temp = $data[$taskId];
-        $data[$taskId] = $data[$taskId + 1];
-        $data[$taskId + 1] = $temp;
+    global $pdo;
+
+    if (isset($_POST['upButton'])) {
+        $taskId = $_POST['upButton'];
+
+        $moveUpData = $pdo->prepare("UPDATE todo SET id = id + 1 WHERE id = :id");
+        $moveUpData->execute([':id' => $taskId]);
+    } elseif (isset($_POST['downButton'])) {
+        $taskId = $_POST['downButton'];
+
+        $moveDownData = $pdo->prepare("UPDATE todo SET id = id - 1 WHERE id = :id");
+        $moveDownData->execute([':id' => $taskId]);
     }
-    writedatabase();
 }
+
 
 /* Remove todo */
 function removeTodo($taskId): void
@@ -66,7 +69,7 @@ function sortTodosAZ(): void
 
     global $pdo, $row;
 
-    $stmt = $pdo->prepare('SELECT * FROM todo ORDER BY name ASC');
+    $stmt = $pdo->prepare('SELECT * FROM todo ORDER BY name');
     $stmt->execute();
 
     $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -93,3 +96,7 @@ function writeDatabase(): void
     exit;
 }
 
+function searchTodo()
+{
+
+}

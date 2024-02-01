@@ -1,0 +1,20 @@
+{
+    "name": "alex/getvalue-from-form",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Alex\\GetvalueFromForm\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Alex-zReeZ",
+            "email": "alexbeck220@gmail.com"
+        }
+    ],
+    "require": {
+        "ext-pdo": "*",
+        "symfony/debug-bundle": "^7.0",
+        "nesbot/carbon": "^3.0"
+    }
+}
