@@ -1,8 +1,8 @@
 <?php
-require_once './vendor/autoload.php';
+require_once '../vendor/autoload.php';
 session_start();
-require "./src/connectToDatabase.php";
-require "./src/todoFunction.php";
+require "../src/connectToDatabase.php";
+require "../src/todoFunction.php";
 global $row;
 
 /* Call the functions */
@@ -50,7 +50,7 @@ if ($showMessage) {
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="../src/style.css">
+    <link rel="stylesheet" href="style.css">
     <title>Todo list PHP</title>
 </head>
 <body>
