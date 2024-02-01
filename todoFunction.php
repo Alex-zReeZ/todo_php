@@ -12,7 +12,7 @@ function addTodo(): void
 }
 
 /* Modify tod */
-function modifyTodo()
+function modifyTodo(): void
 {
     global $pdo;
 
@@ -27,11 +27,6 @@ function modifyTodo()
     }
 
 }
-
-
-
-
-
 
 
 /* Move todo up dans down */
@@ -66,14 +61,25 @@ function resetTodo(): void
 }
 
 /* Sort todo alphabetically */
-function sortTodos(): void
+function sortTodosAZ(): void
 {
-    global $pdo;
-    if (isset($_POST['sortAZ'])) {
-        $pdo->prepare('SELECT * FROM todo order by name ');
-    } elseif ($_POST['sortZA']) {
-        $pdo->prepare('SELECT * FROM todo order by name desc ');
-    }
+
+    global $pdo, $row;
+
+    $stmt = $pdo->prepare('SELECT * FROM todo ORDER BY name ASC');
+    $stmt->execute();
+
+    $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function sortTodosZA(): void
+{
+    global $pdo, $row;
+
+    $stmt = $pdo->prepare('SELECT * FROM todo ORDER BY name DESC');
+    $stmt->execute();
+
+    $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 /* Write data in json */
