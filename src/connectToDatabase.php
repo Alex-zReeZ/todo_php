@@ -1,10 +1,9 @@
 <?php
 
-// Vérifie si la fonction existe déjà
 if (!function_exists('connectToDatabase')) {
     function connectToDatabase() : PDO
     {
-        $dsn = "sqlite:myDb.db";
+        $dsn = "sqlite:../myDb.db";
 
         $options = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -24,5 +23,4 @@ $errorMessage1 = '';
 $query = $pdo->prepare("SELECT * FROM todo");
 $query->execute();
 
-/* get content of database */
 $row = $query->fetchAll(PDO::FETCH_ASSOC);

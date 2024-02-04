@@ -28,23 +28,37 @@ function modifyTodo(): void
 }
 
 /* Move todo up dans down */
-/* Move todo up and down */
-function moveTodoUp()
+function moveTodoUp(): void
 {
     global $pdo;
 
     if (isset($_POST['upButton'])) {
         $taskId = $_POST['upButton'];
 
-        $moveUpData = $pdo->prepare("UPDATE todo SET id = id + 1 WHERE id = :id");
-        $moveUpData->execute([':id' => $taskId]);
-    } elseif (isset($_POST['downButton'])) {
-        $taskId = $_POST['downButton'];
+        $currentTodo = $pdo->prepare("SELECT id FROM todo WHERE id = :id");
+        $currentTodo->execute([':id' => $taskId]);
+        $currentPosition = $currentTodo->fetch(PDO::FETCH_ASSOC)['id'];
 
-        $moveDownData = $pdo->prepare("UPDATE todo SET id = id - 1 WHERE id = :id");
-        $moveDownData->execute([':id' => $taskId]);
+        if ($currentPosition > 1) {
+
+
+            $abovePosition = $currentPosition - 1;
+            $aboveTodo = $pdo->prepare("SELECT id FROM todo WHERE id = :id");
+            $aboveTodo->execute(['id' => $abovePosition]);
+            $aboveTodoId = $aboveTodo->fetch(PDO::FETCH_ASSOC)['id'];
+
+            $moveUpData = $pdo->prepare("UPDATE todo SET id = :tempPosition WHERE id = :id");
+            $moveUpData->execute(['id' => $taskId, ':tempPosition' => -1]);
+
+            $moveAboveData = $pdo->prepare("UPDATE todo SET id = :currentPosition WHERE id = :id");
+            $moveAboveData->execute(['id' => $aboveTodoId, ':currentPosition' => $currentPosition]);
+
+            $moveTempData = $pdo->prepare("UPDATE todo SET id = :abovePosition WHERE id = :id");
+            $moveTempData->execute(['id' => $taskId, ':abovePosition' => $abovePosition]);
+        }
     }
 }
+
 
 
 /* Remove todo */
@@ -75,6 +89,7 @@ function sortTodosAZ(): void
     $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+/* Sort todo inversly alphabetically */
 function sortTodosZA(): void
 {
     global $pdo, $row;
@@ -96,6 +111,7 @@ function writeDatabase(): void
     exit;
 }
 
+/* search a todo in database */
 function searchTodo()
 {
 
